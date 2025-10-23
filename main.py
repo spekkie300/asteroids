@@ -13,7 +13,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    #  Create groups and add objects to  them
+    #  Create groups and add asteroids to  them
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -27,7 +27,7 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
 
-    # s Setup player object
+    # s Setup player asteroid
     _player = Player(x=SCREEN_WIDTH / 2, y=SCREEN_HEIGHT / 2)
     _asteroid_field = AsteroidField()
 
@@ -44,11 +44,18 @@ def main():
         # Call update and draw for groups that are updatable and drawable
         updatable.update(dt)
 
-        for object in asteroids:
-            object.check_collision(_player)
+        for asteroid in asteroids:
+            if asteroid.check_collision(_player):
+                print("Game over!")
+                exit()
 
-        for object in drawable:
-            object.draw(screen)
+            for bullet in shots:
+                if bullet.check_collision(asteroid):
+                    bullet.kill()
+                    asteroid.split()
+
+        for asteroid in drawable:
+            asteroid.draw(screen)
 
         # Render to display and update deltatime
         pygame.display.flip()
