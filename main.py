@@ -4,6 +4,7 @@ from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from player import Player
 from asteroidfield import AsteroidField
 from asteroid import Asteroid
+from shot import Shot
 
 
 def main():
@@ -16,9 +17,11 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
     Player.containers = (updatable, drawable)  # type: ignore
     Asteroid.containers = (asteroids, updatable, drawable)  # type: ignore
     AsteroidField.containers = updatable
+    Shot.containers = (shots, updatable, drawable)
 
     # Setup clock and deltatime
     clock = pygame.time.Clock()
@@ -40,6 +43,10 @@ def main():
 
         # Call update and draw for groups that are updatable and drawable
         updatable.update(dt)
+
+        for object in asteroids:
+            object.check_collision(_player)
+
         for object in drawable:
             object.draw(screen)
 
